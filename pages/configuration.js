@@ -3,32 +3,34 @@ import Head from 'next/head';
 import Container from 'react-bootstrap/Container';
 import Stack from 'react-bootstrap/Stack';
 import Form from 'react-bootstrap/Form';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Layout from '../components/layout';
 
 
 export default function Configuration() {
-  const config_options = {
-    "dqn": {
-      "train": {
-        "lr": ["FLOAT", 0, 0, 1],
-        "optimizer": ["STRING", "Adam", null, null],
-        "some int": ["INT", 0, 0, 10],
-        "some bool": ["BOOL", false, null, null],
-      },
-      "test": {
-        "optimizer": ["STRING", "Adam", null, null],
-      }
-    },
-    "random": {
+
+  const API_URL = "http://localhost:5000";
+  const ENDPOINT = "/config-params";
+
+  const default_options = {
+    "example": {
       "train": {},
       "test": {}
     }
   }
 
-  const [algorithm, setAlgorithm] = useState("dqn");
+  const [algorithm, setAlgorithm] = useState("example");
   const [mode, setMode] = useState("train");
+  const [config_options, setConfigOptions] = useState(default_options);
+
+  useEffect(() => {
+    fetch(API_URL + ENDPOINT)
+      .then(response => response.json())
+      .then(data => {console.log(data); setConfigOptions(data); 
+        setAlgorithm(Object.keys(data)[0]);
+      });
+  }, []);
 
   function handleAlgorithmSelect(event) {
     setAlgorithm(event.target.value);
@@ -96,6 +98,12 @@ export default function Configuration() {
     ); 
   }
 
+  function renderOption(value) {
+    return (
+      <option value={value}>{value}</option>
+    )
+  }
+
   return (
     <Layout>
       <Head>
@@ -110,17 +118,16 @@ export default function Configuration() {
           <Form.Group className="mb-3" controlId="formAlgorithm">
             <Form.Label> Algorithm </Form.Label>
             <Form.Select aria-label="Default select example" 
-                         defaultValue="dqn" 
+                         defaultValue="example" 
                          onChange={handleAlgorithmSelect}>
-              <option value="dqn">DQN</option>
-              <option value="random">Random</option>
+              { Object.keys(config_options).map(renderOption) }
             </Form.Select>
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="formMode">
             <Form.Label>Mode</Form.Label>
             <Form.Select aria-label="Default select example" 
-                         defaultValue="train" 
+                         defaultValue="test" 
                          onChange={handleModeSelect}>
               <option value="train">Train</option>
               <option value="test">Test</option>

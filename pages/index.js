@@ -1,22 +1,19 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Head from 'next/head';
-import styles from '../styles/Home.module.css';
-import Link from 'next/link';
+import Button from 'react-bootstrap/Button';
+
 
 export default function Home() {
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>Reinforcement learning</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main>
-      <h1 className={styles.title}>
-        <Link href="/configuration">Configuration</Link>
-      </h1>
-      <h1 className={styles.title}>
-        <Link href="/logs">Logs</Link>
-      </h1>
+      <Button variant="primary" href="/configuration">Configuration</Button>
+      <Button variant="primary" href="/logs">Logs</Button>
       </main>
     </div>
   );

@@ -1,5 +1,6 @@
-import Link from 'next/link';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Head from 'next/head';
+import Button from 'react-bootstrap/Button';
 
 export default function Configuration() {
   return (
@@ -10,9 +11,8 @@ export default function Configuration() {
       </Head>
 
       <h1>Config page</h1>
-      <h2>
-        <Link href="/">Back to home</Link>
-      </h2>
+      <Button variant="primary" href="/">Back</Button>
+
     </>
   );
 }

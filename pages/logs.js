@@ -1,5 +1,6 @@
-import Link from 'next/link';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Head from 'next/head';
+import Button from 'react-bootstrap/Button';
 
 export default function Logs() {
   return (
@@ -10,9 +11,8 @@ export default function Logs() {
       </Head>
 
       <h1>Logs page</h1>
-      <h2>
-        <Link href="/">Back to home</Link>
-      </h2>
+      <Button variant="primary" href="/">Back</Button>
+
     </>
   );
 }

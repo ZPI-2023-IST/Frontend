@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Container from 'react-bootstrap/Container';
 import Stack from 'react-bootstrap/Stack';
 import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 import { useState, useEffect } from "react";
 
 import Layout from '../components/layout';
@@ -22,75 +23,123 @@ export default function Configuration() {
 
   const [algorithm, setAlgorithm] = useState("example");
   const [mode, setMode] = useState("train");
+  const [config, setConfig] = useState({});
   const [config_options, setConfigOptions] = useState(default_options);
 
   useEffect(() => {
     fetch(API_URL + ENDPOINT)
       .then(response => response.json())
-      .then(data => {console.log(data); setConfigOptions(data); 
-        setAlgorithm(Object.keys(data)[0]);
+      .then(data => {
+        setConfigOptions(data); 
+        let new_algorithm = Object.keys(data)[0];
+        let new_mode = Object.keys(data[new_algorithm])[0];
+        setAlgorithm(new_algorithm); 
+        setMode(new_mode);
+
+        let new_config = {};
+        let config_keys = Object.keys(data[new_algorithm][new_mode]);
+        let config_values = Object.values(data[new_algorithm][new_mode]);
+        config_keys.forEach((key, index) => {
+          new_config[key] = config_values[index][1];
+        });
+        setConfig(new_config);
       });
   }, []);
 
   function handleAlgorithmSelect(event) {
     setAlgorithm(event.target.value);
+    let new_config = {};
+    let config_keys = Object.keys(config_options[event.target.value][mode]);
+    let config_values = Object.values(config_options[event.target.value][mode]);
+    config_keys.forEach((key, index) => {
+      new_config[key] = config_values[index][1];
+    });
+    setConfig(new_config);
   }
   
   function handleModeSelect(event) {
     setMode(event.target.value);
+    let new_config = {};
+    let config_keys = Object.keys(config_options[algorithm][event.target.value]);
+    let config_values = Object.values(config_options[algorithm][event.target.value]);
+    config_keys.forEach((key, index) => {
+      new_config[key] = config_values[index][1];
+    });
+    setConfig(new_config);
+  }
+
+  function handleConfigUpdate(param){
+    return (event) => {
+      setConfig({...config, [param]: event.target.value});
+    }
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    console.log(config);
   }
 
   function displayConfigOptions() {
-    let config = config_options[algorithm][mode];
-    let config_keys = Object.keys(config);
-    let config_values = Object.values(config);
+    let config_params = config_options[algorithm][mode];
+    let config_keys = Object.keys(config_params);
+    let config_values = Object.values(config_params);
+    let alg = algorithm;
+    let md = mode;
+
     return config_keys.map((key, index) => {
       switch(config_values[index][0]){
         case "FLOAT":
           return (
-            <Form.Group className="mb-3" controlId={key}>
+            <Form.Group className="mb-3" key={alg + md + key}>
               <Form.Label> {key} </Form.Label>
               <Form.Control type="number" 
                             step="0.01" 
-                            placeholder={config_values[index][1]} 
+                            value={config[key]}
+                            onChange={handleConfigUpdate(key)}
                             min={config_values[index][2]} 
                             max={config_values[index][3]} />
               {
                 config_values[index][2] != null && config_values[index][3] != null &&
                 <Form.Text className="text-muted">
-                  Value range: {config_values[index][2]} - {config_values[index][3]}
+                  Value range: from {config_values[index][2]} to {config_values[index][3]}
                 </Form.Text>
               }
             </Form.Group>
           )
         case "INT":
           return (
-            <Form.Group className="mb-3" controlId={key}>
+            <Form.Group className="mb-3" key={alg + md + key}>
               <Form.Label> {key} </Form.Label>
               <Form.Control type="number" 
                             step="1" 
-                            placeholder={config_values[index][1]} 
+                            value={config[key]}
+                            onChange={handleConfigUpdate(key)}
                             min={config_values[index][2]} 
                             max={config_values[index][3]} />
               {
                 config_values[index][2] != null && config_values[index][3] != null &&
                 <Form.Text className="text-muted">
-                  Value range: {config_values[index][2]} - {config_values[index][3]}
+                  Value range: from {config_values[index][2]} to {config_values[index][3]}
                 </Form.Text>
               }
             </Form.Group>
           )
         case "BOOL":
           return (
-            <Form.Group className="mb-3" controlId={key}>
-              <Form.Check type="checkbox" label={key} defaultChecked={config_values[index][1]} />
+            <Form.Group className="mb-3" key={alg + md + key}>
+              <Form.Check type="checkbox" 
+                          label={key} 
+                          value={config[key]}
+                          onChange={handleConfigUpdate(key)}/>
             </Form.Group>
           )
         default:
           return (
-            <Form.Group className="mb-3" controlId={key}>
+            <Form.Group className="mb-3" key={alg + md + key}>
               <Form.Label> {key} </Form.Label>
-              <Form.Control type="text" placeholder={config_values[index][1]} />
+              <Form.Control type="text" 
+                            value={config[key]}
+                            onChange={handleConfigUpdate(key)} />
             </Form.Group>
           )          
       }
@@ -134,6 +183,12 @@ export default function Configuration() {
             </Form.Select>
           </Form.Group>
           {displayConfigOptions()}
+          <Button variant="primary" type="submit" onClick={handleSubmit}>
+            Submit
+          </Button>
+          <Button variant="secondary">
+            Current config
+          </Button>
         </Stack>
       </Container>
     </Layout>

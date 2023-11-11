@@ -48,6 +48,14 @@ export default function Configuration() {
       });
   }, []);
 
+  function handleConfigDisplay() {
+    fetch(API_URL + "/config")
+      .then(response => response.json())
+      .then(data => {
+        setServerConfig(data); 
+      });
+  };
+
   function handleAlgorithmSelect(event) {
     setAlgorithm(event.target.value);
     let new_config = {};
@@ -78,7 +86,33 @@ export default function Configuration() {
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(config);
+    let config_params = config_options[algorithm][mode];
+    let config_keys = Object.keys(config_params);
+    let config_values = Object.values(config_params);
+    let response_config = {"algorithm": algorithm, "mode": mode};
+    config_keys.forEach((key, index) => {
+      switch(config_values[index][0]){
+      case "FLOAT":
+        response_config[key] = parseFloat(config[key]);
+        break;
+      case "INT":
+        response_config[key] = parseInt(config[key]);
+        break;
+      case "BOOL":
+        response_config[key] = config[key] === "true";
+        break;
+      default:
+        response_config[key] = config[key];
+      }
+    });
+    fetch(API_URL + "/config", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      },
+      body: JSON.stringify(response_config)
+    })
   }
 
   function displayConfigOptions() {
@@ -159,7 +193,7 @@ export default function Configuration() {
     <Popover id="popover-basic">
       <Popover.Header as="h3">Configuration</Popover.Header>
       <Popover.Body>
-        {Object.keys(serverConfig).map((key) => { return <p>{key}: {serverConfig[key]}</p> })}
+        {Object.keys(serverConfig).map((key) => { return <p>{key}: {serverConfig[key] || "null"}</p> })}
       </Popover.Body>
     </Popover>
   );
@@ -198,7 +232,7 @@ export default function Configuration() {
             Submit
           </Button>
           <OverlayTrigger trigger="click" placement="top" overlay={popover}>
-            <Button variant="secondary">
+            <Button variant="secondary" onClick={handleConfigDisplay}>
               Current config
             </Button>
           </OverlayTrigger>

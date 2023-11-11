@@ -5,7 +5,8 @@ import Stack from 'react-bootstrap/Stack';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { useState, useEffect } from "react";
-
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Popover from 'react-bootstrap/Popover';
 import Layout from '../components/layout';
 
 
@@ -24,6 +25,7 @@ export default function Configuration() {
   const [algorithm, setAlgorithm] = useState("example");
   const [mode, setMode] = useState("train");
   const [config, setConfig] = useState({});
+  const [serverConfig, setServerConfig] = useState({"bbb": "aaa"});
   const [config_options, setConfigOptions] = useState(default_options);
 
   useEffect(() => {
@@ -45,6 +47,14 @@ export default function Configuration() {
         setConfig(new_config);
       });
   }, []);
+
+  function handleConfigDisplay() {
+    fetch(API_URL + "/config")
+      .then(response => response.json())
+      .then(data => {
+        setServerConfig(data); 
+      });
+  };
 
   function handleAlgorithmSelect(event) {
     setAlgorithm(event.target.value);
@@ -76,7 +86,33 @@ export default function Configuration() {
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(config);
+    let config_params = config_options[algorithm][mode];
+    let config_keys = Object.keys(config_params);
+    let config_values = Object.values(config_params);
+    let response_config = {"algorithm": algorithm, "mode": mode};
+    config_keys.forEach((key, index) => {
+      switch(config_values[index][0]){
+      case "FLOAT":
+        response_config[key] = parseFloat(config[key]);
+        break;
+      case "INT":
+        response_config[key] = parseInt(config[key]);
+        break;
+      case "BOOL":
+        response_config[key] = config[key] === "true";
+        break;
+      default:
+        response_config[key] = config[key];
+      }
+    });
+    fetch(API_URL + "/config", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      },
+      body: JSON.stringify(response_config)
+    })
   }
 
   function displayConfigOptions() {
@@ -153,6 +189,15 @@ export default function Configuration() {
     )
   }
 
+  const popover = (
+    <Popover id="popover-basic">
+      <Popover.Header as="h3">Configuration</Popover.Header>
+      <Popover.Body>
+        {Object.keys(serverConfig).map((key) => { return <p>{key}: {serverConfig[key] || "null"}</p> })}
+      </Popover.Body>
+    </Popover>
+  );
+
   return (
     <Layout>
       <Head>
@@ -186,9 +231,12 @@ export default function Configuration() {
           <Button variant="primary" type="submit" onClick={handleSubmit}>
             Submit
           </Button>
-          <Button variant="secondary">
-            Current config
-          </Button>
+          <OverlayTrigger trigger="click" placement="top" overlay={popover}>
+            <Button variant="secondary" onClick={handleConfigDisplay}>
+              Current config
+            </Button>
+          </OverlayTrigger>
+
         </Stack>
       </Container>
     </Layout>

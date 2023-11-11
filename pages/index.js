@@ -3,16 +3,15 @@ import Head from 'next/head';
 import Button from 'react-bootstrap/Button';
 import Stack from 'react-bootstrap/Stack';
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import Dropdown from 'react-bootstrap/Dropdown';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Layout from '../components/layout'
 import { useState, useEffect } from "react";
-import { ChangeEvent } from "react";
 
 
 export default function Home() {
   const [file, setFile] = useState(null);
-
+  const [mode, setMode] = useState("Train");
 
   const handleFileChange = (e) => {
     if (e.target.files) {
@@ -68,24 +67,39 @@ export default function Home() {
       </Head>
 
       <main>
-      <Container
-      className="d-flex align-items-center justify-content-center"
-      style={{ minHeight: '90vh' }}
-    >
-      <Row className="text-center d-flex flex-column align-items-center">
-        <Col>
-          <Button variant="primary" className="mb-3">Start training</Button>
-        </Col>
-        <Col>
-          <input id="file" type="file" onChange={handleFileChange} />
-          <Button variant="secondary" className="m-3" onClick={handleImport}>Import model</Button>
-        </Col>
-        <Col>
-        <Button variant="secondary" className="m-3" onClick={handleExport}>Export model</Button>
+        <Container className='m-4' >
+          <Stack gap={3} className="col-md-5 mx-auto">
+            <div>
+              <h2> Run </h2>
+              <p> Depending on the selected option, start the training or testing process, which will take place according to the uploaded configuration. </p>
+              <Dropdown as={ButtonGroup}>
+                <Button variant="primary">Run {mode}ing</Button>
 
-        </Col>
-      </Row>
-    </Container>
+                <Dropdown.Toggle split variant="primary" id="dropdown-split-basic" />
+
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={() => setMode("Train")}>Train</Dropdown.Item>
+                  <Dropdown.Item onClick={() => setMode("Test")}>Test</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+            <div>
+              <h2>Import</h2>
+              <p>Upload zip file containing the model to be imported.</p>
+              <input id="file" type="file" onChange={handleFileChange} />
+            </div>
+
+            <div>
+              <Button variant="secondary" className="" onClick={handleImport}>Import model</Button>
+            </div>
+
+            <div>
+              <h2>Export</h2>
+              <p>Download zip file containing the model.</p>
+              <Button variant="secondary" onClick={handleExport}>Export model</Button>
+            </div>
+          </Stack>
+        </Container>
       </main>
     </Layout>
   );

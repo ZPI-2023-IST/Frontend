@@ -26,7 +26,6 @@ export default function Logs() {
       .then(response => response.json())
       .then(data => {
         setLogs(data.logs)
-        console.log(data.logs[0].message)
         setFetched(true);
       })
   }, []);

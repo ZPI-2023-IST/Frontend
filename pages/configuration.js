@@ -25,7 +25,7 @@ export default function Configuration() {
   const [algorithm, setAlgorithm] = useState("example");
   const [mode, setMode] = useState("train");
   const [config, setConfig] = useState({});
-  const [serverConfig, setServerConfig] = useState({"bbb": "aaa"});
+  const [serverConfig, setServerConfig] = useState({});
   const [config_options, setConfigOptions] = useState(default_options);
 
   useEffect(() => {
@@ -229,7 +229,7 @@ export default function Configuration() {
           </Form.Group>
           {displayConfigOptions()}
           <Button variant="primary" type="submit" onClick={handleSubmit}>
-            Submit
+            Update config
           </Button>
           <OverlayTrigger trigger="click" placement="top" overlay={popover}>
             <Button variant="secondary" onClick={handleConfigDisplay}>

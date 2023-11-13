@@ -4,10 +4,12 @@ import Container from 'react-bootstrap/Container';
 import Stack from 'react-bootstrap/Stack';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { useState, useEffect } from "react";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
+import Modal from 'react-bootstrap/Modal';
+import Alert from 'react-bootstrap/Alert';
 import Layout from '../components/layout';
+import { useState, useEffect } from "react";
 
 
 export default function Configuration() {
@@ -26,6 +28,11 @@ export default function Configuration() {
   const [config, setConfig] = useState({});
   const [serverConfig, setServerConfig] = useState({});
   const [config_options, setConfigOptions] = useState(default_options);
+  const [show, setShow] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   useEffect(() => {
     fetch(API_URL + ENDPOINT)
@@ -71,6 +78,7 @@ export default function Configuration() {
   }
 
   function handleSubmit(event) {
+    handleClose();
     event.preventDefault();
     let config_params = config_options[algorithm];
     let config_keys = Object.keys(config_params);
@@ -99,6 +107,11 @@ export default function Configuration() {
       },
       body: JSON.stringify(response_config)
     })
+      .then(response => {
+        if(response.ok){
+          setShowSuccess(true);
+      }
+      });
   }
 
   function displayConfigOptions() {
@@ -189,9 +202,11 @@ export default function Configuration() {
         <title>Reinforcement learning</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      
       <Container className='m-4' >
         <Stack gap={3} className="col-md-5 mx-auto">
+          <Alert variant="success" show={showSuccess} onClose={() => setShowSuccess(false)} dismissible>
+            Configuration updated!
+          </Alert>
           <h1>Configuration</h1>
 
           <Form.Group className="mb-3" controlId="formAlgorithm">
@@ -204,7 +219,7 @@ export default function Configuration() {
           </Form.Group>
           
           {displayConfigOptions()}
-          <Button variant="primary" type="submit" onClick={handleSubmit}>
+          <Button variant="primary" type="submit" onClick={handleShow}>
             Update config
           </Button>
           <OverlayTrigger trigger="click" placement="top" overlay={popover}>
@@ -215,6 +230,22 @@ export default function Configuration() {
 
         </Stack>
       </Container>
+
+      <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Update config</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Updating configuration will reset all weights of current model. Are you sure?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="danger" onClick={handleClose}>
+              Nahh
+            </Button>
+            <Button variant="primary" onClick={handleSubmit}>
+              DO IT!
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
     </Layout>
   );
 }

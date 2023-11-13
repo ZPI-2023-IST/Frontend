@@ -5,6 +5,8 @@ import Stack from 'react-bootstrap/Stack';
 import Container from 'react-bootstrap/Container';
 import Dropdown from 'react-bootstrap/Dropdown';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Modal from 'react-bootstrap/Modal';
+import Alert from 'react-bootstrap/Alert';
 import Layout from '../components/layout'
 import { useState, useEffect } from "react";
 
@@ -13,6 +15,11 @@ export default function Home() {
   const [file, setFile] = useState(null);
   const [mode, setMode] = useState("train");
   const [run, setRun] = useState(false);
+  const [show, setShow] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   useEffect(() => {
     fetch("http://localhost:5000/run")
@@ -44,7 +51,7 @@ export default function Home() {
   }
 
   function handleImport(){
-    // upload zip file to api
+    setShow(false);
     if(!file){
       return;
     }
@@ -60,7 +67,7 @@ export default function Home() {
     }).then(response => response.json())
       .then(data => {
         if(data["success"]){
-          alert("Model imported successfully");
+          setShowSuccess(true);
         }
       });
   }
@@ -94,8 +101,14 @@ export default function Home() {
       </Head>
 
       <main>
-        <Container className='m-4' >
-          <Stack gap={3} className="col-md-5 mx-auto">
+        <Container className='mt-5' >
+          <Stack gap={3} className="col-md-5 mx-auto text-center">
+            <Alert variant="success" 
+                   show={showSuccess} 
+                   onClose={() => setShowSuccess(false)} 
+                   dismissible>
+              Model imported successfully!
+            </Alert>
             <div>
               <h2> Run </h2>
               <p> Depending on the selected option, start the training or testing process, which will take place according to the uploaded configuration. </p>
@@ -112,21 +125,33 @@ export default function Home() {
             </div>
             <div>
               <h2>Import</h2>
-              <p>Upload zip file containing the model to be imported.</p>
-              <input id="file" type="file" onChange={handleFileChange} />
-            </div>
-
-            <div>
-              <Button variant="secondary" className="" onClick={handleImport}>Import model</Button>
+              <p>Upload zip file containing the model to be imported. You will be able to change some of the parameters in configuration.</p>
+              <Button variant="secondary" className="" onClick={handleShow}>Import model</Button>
             </div>
 
             <div>
               <h2>Export</h2>
-              <p>Download zip file containing the model.</p>
+              <p>Download zip file containing the configuration and the model with learned weights.</p>
               <Button variant="secondary" onClick={handleExport}>Export model</Button>
             </div>
           </Stack>
         </Container>
+
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Import model</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Upload zip containing model and configuration.</Modal.Body>
+          <input id="file" type="file" onChange={handleFileChange} className='mb-4 mx-auto'/>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={handleImport}>
+              Import
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </main>
     </Layout>
   );

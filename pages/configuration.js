@@ -30,6 +30,7 @@ export default function Configuration() {
   const [config_options, setConfigOptions] = useState(default_options);
   const [show, setShow] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [validated, setValidated] = useState(false); 
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -101,6 +102,18 @@ export default function Configuration() {
     }
   }
 
+  function handleInitialSubmit(event) {
+    const form = event.currentTarget;
+    event.preventDefault();
+    if (form.checkValidity() === false) {
+      event.stopPropagation();
+    }
+    else {
+      handleShow();
+    }
+    setValidated(true);
+  }
+
   function handleSubmit(event) {
     handleClose();
     event.preventDefault();
@@ -152,7 +165,7 @@ export default function Configuration() {
             <Form.Group className="mb-3" key={alg + key}>
               <Form.Label> {key} </Form.Label>
               <Form.Control type="number" 
-                            step="0.01" 
+                            step="0.000000001" 
                             value={config[key]}
                             onChange={handleConfigUpdate(key)}
                             min={config_values[index][2]} 
@@ -161,9 +174,15 @@ export default function Configuration() {
                 {config_values[index][4]}.&nbsp;
               </Form.Text>              
               {
-                config_values[index][2] != null && config_values[index][3] != null &&
+                config_values[index][2] != null &&
                 <Form.Text className="text-muted">
-                  Value range: from {config_values[index][2]} to {config_values[index][3]}
+                 Min value: {config_values[index][2]}.&nbsp;
+                </Form.Text>
+              }
+              {
+                config_values[index][3] != null &&
+                <Form.Text className="text-muted">
+                 Max value: {config_values[index][3]}.&nbsp;
                 </Form.Text>
               }
             </Form.Group>
@@ -182,9 +201,15 @@ export default function Configuration() {
                 {config_values[index][4]}.&nbsp;
               </Form.Text> 
               {
-                config_values[index][2] != null && config_values[index][3] != null &&
+                config_values[index][2] != null &&
                 <Form.Text className="text-muted">
-                  Value range: from {config_values[index][2]} to {config_values[index][3]}
+                 Min value: {config_values[index][2]}.&nbsp;
+                </Form.Text>
+              }
+              {
+                config_values[index][3] != null &&
+                <Form.Text className="text-muted">
+                 Max value: {config_values[index][3]}.&nbsp;
                 </Form.Text>
               }
             </Form.Group>
@@ -246,28 +271,32 @@ export default function Configuration() {
           </Alert>
           <h1>Configuration</h1>
 
-          <Form.Group className="mb-3" controlId="formAlgorithm">
-            <Form.Label> Algorithm </Form.Label>
-            <Form.Select aria-label="Default select example" 
-                         defaultValue="example" 
-                         onChange={handleAlgorithmSelect}
-                         value={algorithm}>
-              { Object.keys(config_options).map(renderOption) }
-            </Form.Select>
-            <Button variant="outline-secondary" size="sm" onClick={fillDefaultConfig} className="mt-3">
-              Fill default
-            </Button>
-          </Form.Group>
-          
-          {displayConfigOptions()}
-          <Button variant="primary" type="submit" onClick={handleShow}>
-            Update config
+          <Form noValidate validated={validated} onSubmit={handleInitialSubmit} id="form">
+            <Form.Group className="mb-3" controlId="formAlgorithm">
+              <Form.Label> Algorithm </Form.Label>
+              <Form.Select aria-label="Default select example" 
+                          defaultValue="example" 
+                          onChange={handleAlgorithmSelect}
+                          value={algorithm}>
+                { Object.keys(config_options).map(renderOption) }
+              </Form.Select>
+              <Button variant="outline-secondary" size="sm" onClick={fillDefaultConfig} className="mt-3">
+                Fill default
+              </Button>
+            </Form.Group>
+            
+            {displayConfigOptions()}
+          </Form>
+
+          <Button variant="primary" type="submit" form='form'>
+              Update config
           </Button>
           <OverlayTrigger trigger="click" placement="top" overlay={popover}>
             <Button variant="secondary" onClick={handleConfigDisplay}>
               Current config
             </Button>
           </OverlayTrigger>
+
 
         </Stack>
       </Container>

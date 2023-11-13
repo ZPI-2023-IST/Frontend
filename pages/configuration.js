@@ -95,9 +95,16 @@ export default function Configuration() {
     }
   }
 
+  function handleCheckboxConfigUpdate(param){
+    return (event) => {
+      setConfig({...config, [param]: !config[param]});
+    }
+  }
+
   function handleSubmit(event) {
     handleClose();
     event.preventDefault();
+
     let config_params = config_options[algorithm];
     let config_keys = Object.keys(config_params);
     let config_values = Object.values(config_params);
@@ -111,7 +118,7 @@ export default function Configuration() {
         response_config[key] = parseInt(config[key]);
         break;
       case "BOOL":
-        response_config[key] = config[key] === "true";
+        response_config[key] = config[key] === true;
         break;
       default:
         response_config[key] = config[key];
@@ -187,8 +194,8 @@ export default function Configuration() {
             <Form.Group className="mb-3" key={alg + key}>
               <Form.Check type="checkbox" 
                           label={key} 
-                          value={config[key]}
-                          onChange={handleConfigUpdate(key)}/>
+                          checked={config[key]}
+                          onChange={handleCheckboxConfigUpdate(key)}/>
               <Form.Text className="text-muted">
                 {config_values[index][4]}.&nbsp;
               </Form.Text> 
@@ -221,7 +228,7 @@ export default function Configuration() {
     <Popover id="popover-basic">
       <Popover.Header as="h3">Configuration</Popover.Header>
       <Popover.Body>
-        {Object.keys(serverConfig).map((key) => { return <p>{key}: {serverConfig[key] || "null"}</p> })}
+        {Object.keys(serverConfig).map((key) => { return <p>{key}: {serverConfig[key] ? serverConfig[key].toString() : "null"}</p> })}
       </Popover.Body>
     </Popover>
   );

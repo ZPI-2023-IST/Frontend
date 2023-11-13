@@ -17,6 +17,7 @@ export default function Home() {
   const [run, setRun] = useState(false);
   const [show, setShow] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [time, setTime] = useState(0);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -26,7 +27,15 @@ export default function Home() {
       .then(response => response.json())
       .then(data => {
         setRun(data["run"]);
+        if(data["run"]){
+          setTime(data["time"]);
+        }
       });
+
+    const interval = setInterval(() => {
+      setTime(time => time + 1);
+    }
+    , 1000);
   }, []);
 
   const handleFileChange = (e) => {
@@ -82,12 +91,16 @@ export default function Home() {
     }).then(response => response.json())
       .then(data => {
         setRun(data["run"]);
+        if(data["run"]){
+          setTime(0);
+        }
       });
   }
 
   function createRunText() {
     if (run) {
-      return "Stop";
+      let time_formatted = new Date(time * 1000).toISOString().substr(11, 8);
+      return "Stop (" + time_formatted + ")";
     } else {
       return "Start " + mode.charAt(0).toUpperCase() + mode.slice(1) + "ing";
     }

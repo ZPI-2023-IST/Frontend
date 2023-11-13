@@ -50,6 +50,14 @@ export default function Configuration() {
         });
         setConfig(new_config);
       });
+
+      fetch(API_URL + "/config")
+      .then(response => response.json())
+      .then(data => {
+        setAlgorithm(data["algorithm"]);
+        setConfig(data); 
+      });
+
   }, []);
 
   function handleConfigDisplay() {
@@ -59,6 +67,16 @@ export default function Configuration() {
         setServerConfig(data); 
       });
   };
+
+  function fillDefaultConfig() {
+    let new_config = {};
+    let config_keys = Object.keys(config_options[algorithm]);
+    let config_values = Object.values(config_options[algorithm]);
+    config_keys.forEach((key, index) => {
+      new_config[key] = config_values[index][1] ? config_values[index][1] : "";
+    });
+    setConfig(new_config);
+  }
 
   function handleAlgorithmSelect(event) {
     setAlgorithm(event.target.value);
@@ -132,6 +150,9 @@ export default function Configuration() {
                             onChange={handleConfigUpdate(key)}
                             min={config_values[index][2]} 
                             max={config_values[index][3]} />
+              <Form.Text className="text-muted">
+                {config_values[index][4]}.&nbsp;
+              </Form.Text>              
               {
                 config_values[index][2] != null && config_values[index][3] != null &&
                 <Form.Text className="text-muted">
@@ -150,6 +171,9 @@ export default function Configuration() {
                             onChange={handleConfigUpdate(key)}
                             min={config_values[index][2]} 
                             max={config_values[index][3]} />
+              <Form.Text className="text-muted">
+                {config_values[index][4]}.&nbsp;
+              </Form.Text> 
               {
                 config_values[index][2] != null && config_values[index][3] != null &&
                 <Form.Text className="text-muted">
@@ -165,6 +189,9 @@ export default function Configuration() {
                           label={key} 
                           value={config[key]}
                           onChange={handleConfigUpdate(key)}/>
+              <Form.Text className="text-muted">
+                {config_values[index][4]}.&nbsp;
+              </Form.Text> 
             </Form.Group>
           )
         default:
@@ -174,6 +201,9 @@ export default function Configuration() {
               <Form.Control type="text" 
                             value={config[key]}
                             onChange={handleConfigUpdate(key)} />
+              <Form.Text className="text-muted">
+                {config_values[index][4]}.&nbsp;
+              </Form.Text>
             </Form.Group>
           )          
       }
@@ -213,9 +243,13 @@ export default function Configuration() {
             <Form.Label> Algorithm </Form.Label>
             <Form.Select aria-label="Default select example" 
                          defaultValue="example" 
-                         onChange={handleAlgorithmSelect}>
+                         onChange={handleAlgorithmSelect}
+                         value={algorithm}>
               { Object.keys(config_options).map(renderOption) }
             </Form.Select>
+            <Button variant="outline-secondary" size="sm" onClick={fillDefaultConfig} className="mt-3">
+              Fill default
+            </Button>
           </Form.Group>
           
           {displayConfigOptions()}

@@ -101,8 +101,8 @@ export default function Home() {
       </Head>
 
       <main>
-        <Container className='mt-5' >
-          <Stack gap={3} className="col-md-5 mx-auto text-center">
+        <Container className='mt-3' >
+          <Stack gap={2} className="col-md-5 mx-auto text-center">
             <Alert variant="success" 
                    show={showSuccess} 
                    onClose={() => setShowSuccess(false)} 
@@ -110,7 +110,7 @@ export default function Home() {
               Model imported successfully!
             </Alert>
             <div>
-              <h2> Run </h2>
+              <h2 className="mt-3"> Run </h2>
               <p> Depending on the selected option, start the training or testing process, which will take place according to the uploaded configuration. </p>
               <Dropdown as={ButtonGroup}>
                 <Button variant="primary" onClick={handleRun}>{createRunText()}</Button>
@@ -124,13 +124,13 @@ export default function Home() {
               </Dropdown>
             </div>
             <div>
-              <h2>Import</h2>
+              <h2 className="mt-3">Import</h2>
               <p>Upload zip file containing the model to be imported. You will be able to change some of the parameters in configuration.</p>
               <Button variant="secondary" className="" onClick={handleShow}>Import model</Button>
             </div>
 
             <div>
-              <h2>Export</h2>
+              <h2 className="mt-3">Export</h2>
               <p>Download zip file containing the configuration and the model with learned weights.</p>
               <Button variant="secondary" onClick={handleExport}>Export model</Button>
             </div>

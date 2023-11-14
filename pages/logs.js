@@ -63,8 +63,7 @@ export default function Logs() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <h1>Logs page</h1>
-
+      <h1 style={{display: 'flex', justifyContent:'center', marginTop: '1em'}}>Log table</h1>
 
       <div style={{display: 'flex', width: '80vw', marginInline: 'auto', marginBottom: '0.2em'}}>
         <div className="window" style={{display: 'flex', gap:'0.2em'}}>
@@ -73,7 +72,7 @@ export default function Logs() {
           <Button variant='dark' className={filter.includes('TRAIN') ? "" : "opacity-50"} onClick={() => handleFilterChangeType('TRAIN')}>Train</Button>{' '}
         </div>
       </div>
-      <div style={{display: 'flex', width: '80vw', marginInline: 'auto', marginBottom: '0.2em'}}>
+      <div style={{display: 'flex', width: '80vw', marginInline: 'auto', marginBottom: '0.5em'}}>
         <div className="window" style={{display: 'flex', gap:'0.2em'}}>
           <Button className={filterLevel.includes('DEBUG') ? "" : "opacity-50"} onClick={() => handleFilterChangeLevel('DEBUG')}>Debug</Button>{' '}
           <Button variant='success' className={filterLevel.includes('INFO') ? "" : "opacity-50"}onClick={() => handleFilterChangeLevel('INFO')}>Info</Button>{' '}
@@ -83,7 +82,7 @@ export default function Logs() {
         </div>
       </div>
       
-      <div className="window" style={{ width: '80vw', maxHeight: '70vh', margin: 'auto', overflowY: 'scroll', display: 'flex', flexDirection: 'column', gap: '0.15em'}}>
+      <div className="window" style={{ width: '80vw', maxHeight: '70vh', margin: 'auto', overflowY: 'scroll', display: 'flex', flexDirection: 'column', gap: '0.15em', marginTop: '1em'}}>
         {filteredLogs.map((log, index) => (
           <Card
             bg={log.message.level === 'ERROR' ? 'danger' : log.message.level === 'WARNING' ? 'warning' : log.message.level === 'INFO' ? 'success' : log.message.level === 'FATAL' ? 'secondary' : 'primary'}

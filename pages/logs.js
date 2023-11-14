@@ -4,8 +4,14 @@ import Button from 'react-bootstrap/Button';
 import Head from 'next/head';
 import Layout from '../components/layout';
 import { useEffect, useState } from 'react';
+// import SimpleSnackbar from '../components/snackbar';
 
 const URL = "http://127.0.0.1:5000/logs";
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text);
+  // document.createElement(SimpleSnackbar('Copied to clipboard.'));
+}
 
 export default function Logs() {
   // let mock_text = '{"logs": message:[{"content": "There has been an error",  "type": "CONFIG", "level": "DEBUG"},' +
@@ -25,7 +31,7 @@ export default function Logs() {
     fetch(URL)
       .then(response => response.json())
       .then(data => {
-        setLogs(data.logs)
+        setLogs(data.logs.reverse())
         setFetched(true);
       })
   }, []);
@@ -61,12 +67,14 @@ export default function Logs() {
 
 
       <div style={{display: 'flex', width: '80vw', marginInline: 'auto', marginBottom: '0.2em'}}>
-        <div className="window" style={{display: 'flex', marginLeft: '2em', gap:'0.2em'}}>
+        <div className="window" style={{display: 'flex', gap:'0.2em'}}>
           <Button variant='dark' className={filter.includes('CONFIG') ? "" : "opacity-50"} onClick={() => handleFilterChangeType('CONFIG')}>Config</Button>{' '}
           <Button variant='dark' className={filter.includes('TEST') ? "" : "opacity-50"} onClick={() => handleFilterChangeType('TEST')}>Test</Button>{' '}
           <Button variant='dark' className={filter.includes('TRAIN') ? "" : "opacity-50"} onClick={() => handleFilterChangeType('TRAIN')}>Train</Button>{' '}
         </div>
-        <div className="window" style={{display: 'flex', marginLeft: 'auto', gap:'0.2em', marginRight: '2em'}}>
+      </div>
+      <div style={{display: 'flex', width: '80vw', marginInline: 'auto', marginBottom: '0.2em'}}>
+        <div className="window" style={{display: 'flex', gap:'0.2em'}}>
           <Button className={filterLevel.includes('DEBUG') ? "" : "opacity-50"} onClick={() => handleFilterChangeLevel('DEBUG')}>Debug</Button>{' '}
           <Button variant='success' className={filterLevel.includes('INFO') ? "" : "opacity-50"}onClick={() => handleFilterChangeLevel('INFO')}>Info</Button>{' '}
           <Button variant='warning' className={filterLevel.includes('WARNING') ? "" : "opacity-50"}onClick={() => handleFilterChangeLevel('WARNING')}>Warning</Button>{' '}
@@ -83,9 +91,10 @@ export default function Logs() {
             text={log.message.level === 'WARNING' ? 'dark' : 'white'}
             key={index}
             className="mb-2"
+            onClick={() => copyToClipboard(log.message.content)}
           >
-            <Card.Header>{'type: '+log.message.type + ', level: ' +log.message.level}</Card.Header>
-            <Card.Body>{log.message.content}</Card.Body>
+            {/* <Card.Header>{'type: '+log.message.type + ', level: ' +log.message.level}</Card.Header> */}
+            <Card.Body>{'type: '+log.message.type + ', level: ' +log.message.level + ', message: ' + log.message.content}</Card.Body>
           </Card>
         ))}
       </div>

@@ -163,6 +163,10 @@ export default function Configuration() {
 
   function displayConfigOptions() {
     let config_params = config_options[algorithm];
+    if(!config_params){
+      return;
+    }
+
     let config_keys = Object.keys(config_params);
     let config_values = Object.values(config_params);
     let alg = algorithm;

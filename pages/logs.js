@@ -4,6 +4,10 @@ import Button from 'react-bootstrap/Button';
 import Head from 'next/head';
 import Layout from '../components/layout';
 import { useEffect, useState } from 'react';
+import React from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+// import SimpleSnackbar from '../components/snackbar';
 
 const URL = "http://127.0.0.1:5000/logs";
 
@@ -16,6 +20,20 @@ export default function Logs() {
   
   // const mock_json = JSON.parse(mock_text);
 
+  const setupToast = (text) => {
+    navigator.clipboard.writeText(text);
+    toast('Copied to clipboard!', {
+      position: "bottom-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "light",
+    });
+    console.log('copied to clipboard');
+  };
+
   const [filter, setFilter] = useState(['CONFIG', 'TRAIN', 'TEST']);
   const [filterLevel, setFilterLevel] = useState(['DEBUG', 'INFO', 'WARNING', 'ERROR', 'FATAL']);
   const [logs, setLogs] = useState([]);
@@ -25,7 +43,7 @@ export default function Logs() {
     fetch(URL)
       .then(response => response.json())
       .then(data => {
-        setLogs(data.logs)
+        setLogs(data.logs.reverse())
         setFetched(true);
       })
   }, []);
@@ -57,16 +75,17 @@ export default function Logs() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <h1>Logs page</h1>
-
+      <h1 style={{display: 'flex', justifyContent:'center', marginTop: '1em'}}>Log table</h1>
 
       <div style={{display: 'flex', width: '80vw', marginInline: 'auto', marginBottom: '0.2em'}}>
-        <div className="window" style={{display: 'flex', marginLeft: '2em', gap:'0.2em'}}>
+        <div className="window" style={{display: 'flex', gap:'0.2em'}}>
           <Button variant='dark' className={filter.includes('CONFIG') ? "" : "opacity-50"} onClick={() => handleFilterChangeType('CONFIG')}>Config</Button>{' '}
           <Button variant='dark' className={filter.includes('TEST') ? "" : "opacity-50"} onClick={() => handleFilterChangeType('TEST')}>Test</Button>{' '}
           <Button variant='dark' className={filter.includes('TRAIN') ? "" : "opacity-50"} onClick={() => handleFilterChangeType('TRAIN')}>Train</Button>{' '}
         </div>
-        <div className="window" style={{display: 'flex', marginLeft: 'auto', gap:'0.2em', marginRight: '2em'}}>
+      </div>
+      <div style={{display: 'flex', width: '80vw', marginInline: 'auto', marginBottom: '0.5em'}}>
+        <div className="window" style={{display: 'flex', gap:'0.2em'}}>
           <Button className={filterLevel.includes('DEBUG') ? "" : "opacity-50"} onClick={() => handleFilterChangeLevel('DEBUG')}>Debug</Button>{' '}
           <Button variant='success' className={filterLevel.includes('INFO') ? "" : "opacity-50"}onClick={() => handleFilterChangeLevel('INFO')}>Info</Button>{' '}
           <Button variant='warning' className={filterLevel.includes('WARNING') ? "" : "opacity-50"}onClick={() => handleFilterChangeLevel('WARNING')}>Warning</Button>{' '}
@@ -75,7 +94,7 @@ export default function Logs() {
         </div>
       </div>
       
-      <div className="window" style={{ width: '80vw', maxHeight: '70vh', margin: 'auto', overflowY: 'scroll', display: 'flex', flexDirection: 'column', gap: '0.15em'}}>
+      <div className="window" style={{ width: '80vw', maxHeight: '70vh', margin: 'auto', overflowY: 'scroll', display: 'flex', flexDirection: 'column', gap: '0.15em', marginTop: '1em'}}>
         {filteredLogs.map((log, index) => (
           <Card
             bg={log.message.level === 'ERROR' ? 'danger' : log.message.level === 'WARNING' ? 'warning' : log.message.level === 'INFO' ? 'success' : log.message.level === 'FATAL' ? 'secondary' : 'primary'}
@@ -83,9 +102,11 @@ export default function Logs() {
             text={log.message.level === 'WARNING' ? 'dark' : 'white'}
             key={index}
             className="mb-2"
+            onClick={() => setupToast(log.message.content)}
           >
-            <Card.Header>{'type: '+log.message.type + ', level: ' +log.message.level}</Card.Header>
-            <Card.Body>{log.message.content}</Card.Body>
+            <ToastContainer />
+            {/* <Card.Header>{'type: '+log.message.type + ', level: ' +log.message.level}</Card.Header> */}
+            <Card.Body>{'type: '+log.message.type + ', level: ' +log.message.level + ', message: ' + log.message.content}</Card.Body>
           </Card>
         ))}
       </div>

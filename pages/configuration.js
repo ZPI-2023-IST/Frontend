@@ -18,10 +18,7 @@ export default function Configuration() {
   const ENDPOINT = "/config-params";
 
   const default_options = {
-    "example": {
-      "train": {},
-      "test": {}
-    }
+    "example": {}
   }
 
   const [algorithm, setAlgorithm] = useState("example");

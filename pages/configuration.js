@@ -28,6 +28,8 @@ export default function Configuration() {
   const [show, setShow] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [validated, setValidated] = useState(false); 
+  const [showError, setShowError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -134,6 +136,7 @@ export default function Configuration() {
         response_config[key] = config[key];
       }
     });
+    
     fetch(API_URL + "/config", {
       method: "PUT",
       headers: {
@@ -145,7 +148,16 @@ export default function Configuration() {
       .then(response => {
         if(response.ok){
           setShowSuccess(true);
-      }
+        }
+        else{
+          return response.json();
+        }
+      })
+      .then(data => {
+        if(data){
+          setErrorMsg(data["error"]);
+          setShowError(true);
+        }
       });
   }
 
@@ -266,6 +278,12 @@ export default function Configuration() {
           <Alert variant="success" show={showSuccess} onClose={() => setShowSuccess(false)} dismissible>
             Configuration updated!
           </Alert>
+          <Alert variant="danger" 
+                   show={showError} 
+                   onClose={() => setShowError(false)} 
+                   dismissible>
+              {errorMsg}
+            </Alert>
           <h1>Configuration</h1>
 
           <Form noValidate validated={validated} onSubmit={handleInitialSubmit} id="form">

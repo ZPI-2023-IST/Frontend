@@ -17,6 +17,8 @@ export default function Home() {
   const [run, setRun] = useState(false);
   const [show, setShow] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
   const [time, setTime] = useState(0);
 
   const handleClose = () => setShow(false);
@@ -73,12 +75,14 @@ export default function Home() {
         'Content-Type': 'application/zip'
       },
       body: formData
-    }).then(response => response.json())
-      .then(data => {
-        if(data["success"]){
-          setShowSuccess(true);
-        }
-      });
+    }).then(response => {
+      if(response.status == 200){
+        setShowSuccess(true);
+      } else {
+        setShowError(true);
+        response.json().then(data => setErrorMsg(data["error"]));
+      }
+    });
   }
 
   function handleRun() {
@@ -121,6 +125,12 @@ export default function Home() {
                    onClose={() => setShowSuccess(false)} 
                    dismissible>
               Model imported successfully!
+            </Alert>
+            <Alert variant="danger" 
+                   show={showError} 
+                   onClose={() => setShowError(false)} 
+                   dismissible>
+              {errorMsg}
             </Alert>
             <div>
               <h2 className="mt-3"> Run </h2>

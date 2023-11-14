@@ -4,14 +4,12 @@ import Button from 'react-bootstrap/Button';
 import Head from 'next/head';
 import Layout from '../components/layout';
 import { useEffect, useState } from 'react';
+import React from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // import SimpleSnackbar from '../components/snackbar';
 
 const URL = "http://127.0.0.1:5000/logs";
-
-function copyToClipboard(text) {
-  navigator.clipboard.writeText(text);
-  // document.createElement(SimpleSnackbar('Copied to clipboard.'));
-}
 
 export default function Logs() {
   // let mock_text = '{"logs": message:[{"content": "There has been an error",  "type": "CONFIG", "level": "DEBUG"},' +
@@ -21,6 +19,20 @@ export default function Logs() {
   //   '{"content": "It\'s 50th move. There are 13 cards on the board.",  "type": "TRAIN", "level": "FATAL"}]}';
   
   // const mock_json = JSON.parse(mock_text);
+
+  const setupToast = (text) => {
+    navigator.clipboard.writeText(text);
+    toast('Copied to clipboard!', {
+      position: "bottom-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "light",
+    });
+    console.log('copied to clipboard');
+  };
 
   const [filter, setFilter] = useState(['CONFIG', 'TRAIN', 'TEST']);
   const [filterLevel, setFilterLevel] = useState(['DEBUG', 'INFO', 'WARNING', 'ERROR', 'FATAL']);
@@ -90,8 +102,9 @@ export default function Logs() {
             text={log.message.level === 'WARNING' ? 'dark' : 'white'}
             key={index}
             className="mb-2"
-            onClick={() => copyToClipboard(log.message.content)}
+            onClick={() => setupToast(log.message.content)}
           >
+            <ToastContainer />
             {/* <Card.Header>{'type: '+log.message.type + ', level: ' +log.message.level}</Card.Header> */}
             <Card.Body>{'type: '+log.message.type + ', level: ' +log.message.level + ', message: ' + log.message.content}</Card.Body>
           </Card>

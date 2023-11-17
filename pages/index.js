@@ -112,12 +112,6 @@ export default function Home() {
 
   return (
     <Layout>
-      <Head>
-        <title>Reinforcement learning</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main>
         <Container className='mt-3' >
           <Stack gap={2} className="col-md-5 mx-auto text-center">
             <Alert variant="success" 
@@ -175,7 +169,6 @@ export default function Home() {
             </Button>
           </Modal.Footer>
         </Modal>
-      </main>
     </Layout>
   );
 }

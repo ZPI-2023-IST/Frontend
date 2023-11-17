@@ -70,11 +70,6 @@ export default function Logs() {
 
   return fetched?(
     <Layout>
-      <Head>
-        <title>Reinforcement learning</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <h1 style={{display: 'flex', justifyContent:'center', marginTop: '1em'}}>Log table</h1>
 
       <div style={{display: 'flex', width: '80vw', marginInline: 'auto', marginBottom: '0.2em'}}>

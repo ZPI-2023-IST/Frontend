@@ -2,16 +2,19 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Layout from '../components/layout';
+import Port from '../components/port';
 import { useEffect, useState } from 'react';
 import React from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import SimpleSnackbar from '../components/snackbar';
 
-const API_URL = "http://localhost:5000";
-const LOGS_ENDPOINT = "/logs";
+
 
 export default function Logs() {
+  const API_URL = "http://localhost";
+  const PORT = Port();
+  const LOGS_ENDPOINT = "/logs";
   // let mock_text = '{"logs": message:[{"content": "There has been an error",  "type": "CONFIG", "level": "DEBUG"},' +
   //   '{"content": "Moved Ks to As",  "type": "TEST", "level": "INFO"},' +
   //   '{"content": "There has been an error",  "type": "CONFIG", "level": "WARNING"},' +
@@ -40,7 +43,7 @@ export default function Logs() {
   const [fetched, setFetched] = useState(false);
 
   useEffect(() => {
-    fetch(API_URL + LOGS_ENDPOINT)
+    fetch(API_URL + ":" + PORT + LOGS_ENDPOINT)
       .then(response => response.json())
       .then(data => {
         setLogs(data.logs.reverse())

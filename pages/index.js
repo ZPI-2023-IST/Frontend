@@ -7,6 +7,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Modal from 'react-bootstrap/Modal';
 import Alert from 'react-bootstrap/Alert';
 import Layout from '../components/layout'
+import Port from '../components/port';
 import { useState, useEffect } from "react";
 
 
@@ -23,12 +24,13 @@ export default function Home() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const API_URL = "http://localhost:5000";
+  const API_URL = "http://localhost";
+  const PORT = Port();
   const RUN_ENDPOINT = "/run";
   const MODEL_ENDPOINT = "/model";
 
   useEffect(() => {
-    fetch(API_URL + RUN_ENDPOINT)
+    fetch(API_URL + ":" + PORT + RUN_ENDPOINT)
       .then(response => response.json())
       .then(data => {
         setRun(data["run"]);
@@ -51,7 +53,7 @@ export default function Home() {
 
   function handleExport() {
     // fetch model endpoint and download zip file sent from api
-    fetch(API_URL + MODEL_ENDPOINT)
+    fetch(API_URL + ":" + PORT + MODEL_ENDPOINT)
       .then(response => response.blob())
       .then(blob => {
         blob.lastModifiedDate = new Date();
@@ -72,7 +74,7 @@ export default function Home() {
     const formData = new FormData();
     console.log(file);
     formData.append('file', file);
-    fetch(API_URL + MODEL_ENDPOINT, {
+    fetch(API_URL + ":" + PORT + MODEL_ENDPOINT, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/zip'
@@ -89,7 +91,7 @@ export default function Home() {
   }
 
   function handleRun() {
-    fetch(API_URL + RUN_ENDPOINT, {
+    fetch(API_URL + ":" + PORT + RUN_ENDPOINT, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'

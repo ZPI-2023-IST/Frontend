@@ -1,5 +1,4 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Head from 'next/head';
 import Button from 'react-bootstrap/Button';
 import Stack from 'react-bootstrap/Stack';
 import Container from 'react-bootstrap/Container';
@@ -24,8 +23,12 @@ export default function Home() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const API_URL = "http://localhost:5000";
+  const RUN_ENDPOINT = "/run";
+  const MODEL_ENDPOINT = "/model";
+
   useEffect(() => {
-    fetch("http://localhost:5000/run")
+    fetch(API_URL + RUN_ENDPOINT)
       .then(response => response.json())
       .then(data => {
         setRun(data["run"]);
@@ -48,7 +51,7 @@ export default function Home() {
 
   function handleExport() {
     // fetch model endpoint and download zip file sent from api
-    fetch("http://localhost:5000/model")
+    fetch(API_URL + MODEL_ENDPOINT)
       .then(response => response.blob())
       .then(blob => {
         blob.lastModifiedDate = new Date();
@@ -69,7 +72,7 @@ export default function Home() {
     const formData = new FormData();
     console.log(file);
     formData.append('file', file);
-    fetch("http://localhost:5000/model", {
+    fetch(API_URL + MODEL_ENDPOINT, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/zip'
@@ -86,7 +89,7 @@ export default function Home() {
   }
 
   function handleRun() {
-    fetch("http://localhost:5000/run", {
+    fetch(API_URL + RUN_ENDPOINT, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -103,8 +106,8 @@ export default function Home() {
 
   function createRunText() {
     if (run) {
-      let time_formatted = new Date(time * 1000).toISOString().substr(11, 8);
-      return "Stop (" + time_formatted + ")";
+      let timeFormatted = new Date(time * 1000).toISOString().substr(11, 8);
+      return "Stop (" + timeFormatted + ")";
     } else {
       return "Start " + mode.charAt(0).toUpperCase() + mode.slice(1) + "ing";
     }

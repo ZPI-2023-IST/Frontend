@@ -1,5 +1,4 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Head from 'next/head';
 import Container from 'react-bootstrap/Container';
 import Stack from 'react-bootstrap/Stack';
 import Form from 'react-bootstrap/Form';
@@ -17,9 +16,10 @@ import { useState, useEffect } from "react";
 export default function Configuration() {
 
   const API_URL = "http://localhost:5000";
-  const ENDPOINT = "/config-params";
+  const OPTIONS_ENDPOINT = "/config-params";
+  const CONFIG_ENDPOINT = "/config";
 
-  const default_options = {
+  const defaultOptions = {
     "example": {}
   }
 
@@ -27,7 +27,7 @@ export default function Configuration() {
   const [config, setConfig] = useState({});
   const [serverConfig, setServerConfig] = useState({});
   const [modConfig, setModConfig] = useState({});
-  const [config_options, setConfigOptions] = useState(default_options);
+  const [configOptions, setConfigOptions] = useState(defaultOptions);
   const [modConfigOptions, setModConfigOptions] = useState({});
   const [show, setShow] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -40,36 +40,36 @@ export default function Configuration() {
   const handleShow = () => setShow(true);
 
   useEffect(() => {
-    fetch(API_URL + ENDPOINT)
+    fetch(API_URL + OPTIONS_ENDPOINT)
       .then(response => response.json())
       .then(data => {
         setConfigOptions(data); 
-        let new_algorithm = Object.keys(data)[0];
-        setAlgorithm(new_algorithm); 
+        let newAlgorithm = Object.keys(data)[0];
+        setAlgorithm(newAlgorithm); 
 
-        let new_config = {};
-        let config_keys = Object.keys(data[new_algorithm]);
-        let config_values = Object.values(data[new_algorithm]);
-        config_keys.forEach((key, index) => {
-          new_config[key] = config_values[index][1];
+        let newConfig = {};
+        let configKeys = Object.keys(data[newAlgorithm]);
+        let configValues = Object.values(data[newAlgorithm]);
+        configKeys.forEach((key, index) => {
+          newConfig[key] = configValues[index][1];
         });
-        setConfig(new_config);
+        setConfig(newConfig);
       });
 
-    fetch(API_URL + "/config")
+    fetch(API_URL + CONFIG_ENDPOINT)
     .then(response => response.json())
     .then(data => {
       setAlgorithm(data["algorithm"]);
       setConfig(data); 
     });
 
-    fetch(API_URL + "/config-params?modifiable=1")
+    fetch(API_URL + OPTIONS_ENDPOINT + "?modifiable=1")
     .then(response => response.json())
     .then(data => {
       setModConfigOptions(data); 
     });
 
-    fetch(API_URL + "/config?modifiable=1")
+    fetch(API_URL + CONFIG_ENDPOINT + "?modifiable=1")
     .then(response => response.json())
     .then(data => {
       setModConfig(data); 
@@ -78,7 +78,7 @@ export default function Configuration() {
   }, []);
 
   function handleConfigDisplay() {
-    fetch(API_URL + "/config")
+    fetch(API_URL + CONFIG_ENDPOINT)
       .then(response => response.json())
       .then(data => {
         setServerConfig(data); 
@@ -86,24 +86,24 @@ export default function Configuration() {
   };
 
   function fillDefaultConfig() {
-    let new_config = {};
-    let config_keys = Object.keys(config_options[algorithm]);
-    let config_values = Object.values(config_options[algorithm]);
-    config_keys.forEach((key, index) => {
-      new_config[key] = config_values[index][1] ? config_values[index][1] : "";
+    let newConfig = {};
+    let configKeys = Object.keys(configOptions[algorithm]);
+    let configValues = Object.values(configOptions[algorithm]);
+    configKeys.forEach((key, index) => {
+      newConfig[key] = configValues[index][1] ? configValues[index][1] : "";
     });
-    setConfig(new_config);
+    setConfig(newConfig);
   }
 
   function handleAlgorithmSelect(event) {
     setAlgorithm(event.target.value);
-    let new_config = {};
-    let config_keys = Object.keys(config_options[event.target.value]);
-    let config_values = Object.values(config_options[event.target.value]);
-    config_keys.forEach((key, index) => {
-      new_config[key] = config_values[index][1];
+    let newConfig = {};
+    let configKeys = Object.keys(configOptions[event.target.value]);
+    let configValues = Object.values(configOptions[event.target.value]);
+    configKeys.forEach((key, index) => {
+      newConfig[key] = configValues[index][1];
     });
-    setConfig(new_config);
+    setConfig(newConfig);
   }
 
   function handleConfigUpdate(param){
@@ -149,36 +149,36 @@ export default function Configuration() {
       handleClose();
       event.preventDefault();
 
-      let config_params = modify ? modConfigOptions[algorithm] : config_options[algorithm];
+      let configParams = modify ? modConfigOptions[algorithm] : configOptions[algorithm];
       let currConfig = modify ? modConfig : config;
       let method = modify ? "PUT" : "POST";
 
-      let config_keys = Object.keys(config_params);
-      let config_values = Object.values(config_params);
-      let response_config = {"algorithm": algorithm};
-      config_keys.forEach((key, index) => {
-        switch(config_values[index][0]){
+      let configKeys = Object.keys(configParams);
+      let configValues = Object.values(configParams);
+      let responseConfig = {"algorithm": algorithm};
+      configKeys.forEach((key, index) => {
+        switch(configValues[index][0]){
         case "FLOAT":
-          response_config[key] = parseFloat(currConfig[key]);
+          responseConfig[key] = parseFloat(currConfig[key]);
           break;
         case "INT":
-          response_config[key] = parseInt(currConfig[key]);
+          responseConfig[key] = parseInt(currConfig[key]);
           break;
         case "BOOL":
-          response_config[key] = currConfig[key] === true;
+          responseConfig[key] = currConfig[key] === true;
           break;
         default:
-          response_config[key] = currConfig[key];
+          responseConfig[key] = currConfig[key];
         }
       });
       
-      fetch(API_URL + "/config", {
+      fetch(API_URL + CONFIG_ENDPOINT, {
         method: method,
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*"
         },
-        body: JSON.stringify(response_config)
+        body: JSON.stringify(responseConfig)
       })
         .then(response => {
           if(response.ok){
@@ -197,34 +197,34 @@ export default function Configuration() {
   }
   
 
-  function displayOption(key, index, alg, config_values, mod){
+  function displayOption(key, index, alg, configValues, mod){
     let setConfigState = mod ? handleModConfigUpdate : handleConfigUpdate;
     let setCheckboxConfigState = mod ? handleModCheckboxConfigUpdate : handleCheckboxConfigUpdate;
-    let config_state = mod ? modConfig : config;
-    switch(config_values[index][0]){
+    let configState = mod ? modConfig : config;
+    switch(configValues[index][0]){
       case "FLOAT":
         return (
           <Form.Group className="mb-3" key={alg + key}>
             <Form.Label> {key} </Form.Label>
             <Form.Control type="number" 
                           step="0.000000001" 
-                          value={config_state[key]}
+                          value={configState[key]}
                           onChange={setConfigState(key)}
-                          min={config_values[index][2]} 
-                          max={config_values[index][3]} />
+                          min={configValues[index][2]} 
+                          max={configValues[index][3]} />
             <Form.Text className="text-muted">
-              {config_values[index][4]}.&nbsp;
+              {configValues[index][4]}.&nbsp;
             </Form.Text>              
             {
-              config_values[index][2] != null &&
+              configValues[index][2] != null &&
               <Form.Text className="text-muted">
-               Min value: {config_values[index][2]}.&nbsp;
+               Min value: {configValues[index][2]}.&nbsp;
               </Form.Text>
             }
             {
-              config_values[index][3] != null &&
+              configValues[index][3] != null &&
               <Form.Text className="text-muted">
-               Max value: {config_values[index][3]}.&nbsp;
+               Max value: {configValues[index][3]}.&nbsp;
               </Form.Text>
             }
           </Form.Group>
@@ -235,23 +235,23 @@ export default function Configuration() {
             <Form.Label> {key} </Form.Label>
             <Form.Control type="number" 
                           step="1" 
-                          value={config_state[key]}
+                          value={configState[key]}
                           onChange={setConfigState(key)}
-                          min={config_values[index][2]} 
-                          max={config_values[index][3]} />
+                          min={configValues[index][2]} 
+                          max={configValues[index][3]} />
             <Form.Text className="text-muted">
-              {config_values[index][4]}.&nbsp;
+              {configValues[index][4]}.&nbsp;
             </Form.Text> 
             {
-              config_values[index][2] != null &&
+              configValues[index][2] != null &&
               <Form.Text className="text-muted">
-               Min value: {config_values[index][2]}.&nbsp;
+               Min value: {configValues[index][2]}.&nbsp;
               </Form.Text>
             }
             {
-              config_values[index][3] != null &&
+              configValues[index][3] != null &&
               <Form.Text className="text-muted">
-               Max value: {config_values[index][3]}.&nbsp;
+               Max value: {configValues[index][3]}.&nbsp;
               </Form.Text>
             }
           </Form.Group>
@@ -261,10 +261,10 @@ export default function Configuration() {
           <Form.Group className="mb-3" key={alg + key}>
             <Form.Check type="checkbox" 
                         label={key} 
-                        checked={config_state[key]}
+                        checked={configState[key]}
                         onChange={setCheckboxConfigState(key)}/>
             <Form.Text className="text-muted">
-              {config_values[index][4]}.&nbsp;
+              {configValues[index][4]}.&nbsp;
             </Form.Text> 
           </Form.Group>
         )
@@ -273,10 +273,10 @@ export default function Configuration() {
           <Form.Group className="mb-3" key={alg + key}>
             <Form.Label> {key} </Form.Label>
             <Form.Control type="text" 
-                          value={config_state[key]}
+                          value={configState[key]}
                           onChange={setConfigState(key)} />
             <Form.Text className="text-muted">
-              {config_values[index][4]}.&nbsp;
+              {configValues[index][4]}.&nbsp;
             </Form.Text>
           </Form.Group>
         )          
@@ -285,31 +285,31 @@ export default function Configuration() {
   
 
   function displayConfigOptions() {
-    let config_params = config_options[algorithm];
-    if(!config_params){
+    let configParams = configOptions[algorithm];
+    if(!configParams){
       return;
     }
 
-    let config_keys = Object.keys(config_params);
-    let config_values = Object.values(config_params);
+    let configKeys = Object.keys(configParams);
+    let configValues = Object.values(configParams);
     let alg = algorithm;
 
-    return config_keys.map((key, index) => { 
-      return displayOption(key, index, alg, config_values, false) 
+    return configKeys.map((key, index) => { 
+      return displayOption(key, index, alg, configValues, false) 
     }); 
   }
 
   function displayModConfigOptions() { 
-    let config_params = modConfigOptions[algorithm];
-    if(!config_params){
+    let configParams = modConfigOptions[algorithm];
+    if(!configParams){
       return;
     }
-    let config_keys = Object.keys(config_params);
-    let config_values = Object.values(config_params);
+    let configKeys = Object.keys(configParams);
+    let configValues = Object.values(configParams);
     let alg = algorithm;
 
-    return config_keys.map((key, index) => { 
-      return displayOption(key, index, alg, config_values, true) 
+    return configKeys.map((key, index) => { 
+      return displayOption(key, index, alg, configValues, true) 
     }); 
   }
 
@@ -357,7 +357,7 @@ export default function Configuration() {
                               defaultValue="example" 
                               onChange={handleAlgorithmSelect}
                               value={algorithm}>
-                    { Object.keys(config_options).map(renderOption) }
+                    { Object.keys(configOptions).map(renderOption) }
                   </Form.Select>
                   <Button variant="outline-secondary" size="sm" onClick={fillDefaultConfig} className="mt-3">
                     Fill default

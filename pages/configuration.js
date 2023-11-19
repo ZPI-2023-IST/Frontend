@@ -11,11 +11,11 @@ import Layout from '../components/layout';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import { useState, useEffect } from "react";
-
+import Port from '../components/port';
 
 export default function Configuration() {
-
-  const API_URL = "http://localhost:5000";
+  const API_URL = "http://localhost";
+  const PORT = Port();
   const OPTIONS_ENDPOINT = "/config-params";
   const CONFIG_ENDPOINT = "/config";
 
@@ -40,7 +40,7 @@ export default function Configuration() {
   const handleShow = () => setShow(true);
 
   useEffect(() => {
-    fetch(API_URL + OPTIONS_ENDPOINT)
+    fetch(API_URL + ":" + PORT + OPTIONS_ENDPOINT)
       .then(response => response.json())
       .then(data => {
         setConfigOptions(data); 
@@ -56,20 +56,20 @@ export default function Configuration() {
         setConfig(newConfig);
       });
 
-    fetch(API_URL + CONFIG_ENDPOINT)
+    fetch(API_URL + ":" + PORT + CONFIG_ENDPOINT)
     .then(response => response.json())
     .then(data => {
       setAlgorithm(data["algorithm"]);
       setConfig(data); 
     });
 
-    fetch(API_URL + OPTIONS_ENDPOINT + "?modifiable=1")
+    fetch(API_URL + ":" + PORT + OPTIONS_ENDPOINT + "?modifiable=1")
     .then(response => response.json())
     .then(data => {
       setModConfigOptions(data); 
     });
 
-    fetch(API_URL + CONFIG_ENDPOINT + "?modifiable=1")
+    fetch(API_URL + ":" + PORT + CONFIG_ENDPOINT + "?modifiable=1")
     .then(response => response.json())
     .then(data => {
       setModConfig(data); 
@@ -78,7 +78,7 @@ export default function Configuration() {
   }, []);
 
   function handleConfigDisplay() {
-    fetch(API_URL + CONFIG_ENDPOINT)
+    fetch(API_URL + ":" + PORT + CONFIG_ENDPOINT)
       .then(response => response.json())
       .then(data => {
         setServerConfig(data); 
@@ -172,7 +172,7 @@ export default function Configuration() {
         }
       });
       
-      fetch(API_URL + CONFIG_ENDPOINT, {
+      fetch(API_URL + ":" + PORT + CONFIG_ENDPOINT, {
         method: method,
         headers: {
           "Content-Type": "application/json",

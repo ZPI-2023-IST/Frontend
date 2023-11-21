@@ -32,9 +32,7 @@ export default function Visualize() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                data: history[index]
-            })
+            body: JSON.stringify(history[index])
         })
             .then(response => response.json())
             .then(data => {

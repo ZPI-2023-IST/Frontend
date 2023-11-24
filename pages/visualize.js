@@ -2,6 +2,7 @@ import Port from "../components/port";
 import ListGroup from 'react-bootstrap/ListGroup';
 import Layout from '../components/layout'
 import Button from 'react-bootstrap/Button';
+import { Table } from 'react-bootstrap';
 import { useState, useEffect } from "react";
 
 export default function Visualize() {
@@ -32,10 +33,11 @@ export default function Visualize() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(history[index])
+            body: JSON.stringify(history[index]['game'])
         })
             .then(response => response.json())
             .then(data => {
+                console.log(data);
                 // redirect to localhost:5005
                 window.open(VISUALIZE_URL + ":" + VISUALIZE_PORT + BOARD_ENPOINT, "_blank");
             });
@@ -43,21 +45,30 @@ export default function Visualize() {
 
     return (
         <Layout>
-            <ListGroup>
-                {history.map((item, index) => (
-                    <ListGroup.Item key={index}>
-                        <div className="row">
-                            <div className="col-2">
-                                <p>Game {index} </p>
-                            </div>
-                            <div className="col-10">
-                                <Button variant="primary" onClick={() => handleVisualize(index)}>Visualize</Button>
-                            </div>
-                        </div>
-                    </ListGroup.Item>
-                ))    
-                }
-            </ListGroup>
+            <div className="table-container m-4">
+            <Table striped bordered hover responsive>
+                <thead>
+                    <tr>
+                        <th>Game</th>
+                        <th>State</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {history.map((item, index) => (
+                        <tr key={index}>
+                            <td>{index}</td>
+                            <td>{item['state']}</td>
+                            <td>
+                                <Button variant="primary" onClick={() => handleVisualize(index)}>
+                                    Visualize
+                                </Button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
+            </div>
         </Layout>
     )
 }

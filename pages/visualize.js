@@ -1,17 +1,16 @@
-import Port from "../components/port";
-import ListGroup from 'react-bootstrap/ListGroup';
+import Config from "../components/config";
 import Layout from '../components/layout'
 import Button from 'react-bootstrap/Button';
 import { Table } from 'react-bootstrap';
 import { useState, useEffect } from "react";
 
 export default function Visualize() {
-    const API_URL = "http://localhost";
-    const PORT = Port();
+    const API_URL = Config()["rl_host"];
+    const PORT = Config()["rl_port"];
     const HISTORY_ENDPOINT = "/game-history";
 
-    const VISUALIZE_URL = "http://localhost";
-    const VISUALIZE_PORT = "5005";
+    const VISUALIZE_URL = Config()["visualize_host"];
+    const VISUALIZE_PORT = Config()["visualize_port"];
     const VISUALIZE_ENDPOINT = "/api/visualize";
     const BOARD_ENPOINT = "/freecell";
 

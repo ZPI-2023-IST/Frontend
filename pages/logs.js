@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Layout from '../components/layout';
-import Port from '../components/port';
+import Config from '../components/config';
 import { useEffect, useState } from 'react';
 import React from 'react';
 import { ToastContainer, toast } from 'react-toastify';
@@ -12,8 +12,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 export default function Logs() {
-  const API_URL = "http://localhost";
-  const PORT = Port();
+  const API_URL = Config()["rl_host"];
+  const PORT = Config()["rl_port"];
   const LOGS_ENDPOINT = "/logs";
   // let mock_text = '{"logs": message:[{"content": "There has been an error",  "type": "CONFIG", "level": "DEBUG"},' +
   //   '{"content": "Moved Ks to As",  "type": "TEST", "level": "INFO"},' +

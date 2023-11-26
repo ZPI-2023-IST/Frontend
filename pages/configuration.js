@@ -11,11 +11,11 @@ import Layout from '../components/layout';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import { useState, useEffect } from "react";
-import Port from '../components/port';
+import Config from '../components/config';
 
 export default function Configuration() {
-  const API_URL = "http://localhost";
-  const PORT = Port();
+  const API_URL = Config()["rl_host"];
+  const PORT = Config()["rl_port"];
   const OPTIONS_ENDPOINT = "/config-params";
   const CONFIG_ENDPOINT = "/config";
 

@@ -1,0 +1,10 @@
+{
+    "rl":{
+        "port": 5000,
+        "host": "http://localhost"
+    },
+    "visualize":{
+        "host": "http://localhost",
+        "port": 5005
+    }
+}

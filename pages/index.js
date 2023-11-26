@@ -7,7 +7,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Modal from 'react-bootstrap/Modal';
 import Alert from 'react-bootstrap/Alert';
 import Layout from '../components/layout'
-import Port from '../components/port';
+import Config from '../components/config';
 import { useState, useEffect } from "react";
 
 
@@ -24,8 +24,8 @@ export default function Home() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const API_URL = "http://localhost";
-  const PORT = Port();
+  const API_URL = Config()["rl_host"];
+  const PORT = Config()["rl_port"];
   const RUN_ENDPOINT = "/run";
   const MODEL_ENDPOINT = "/model";
 

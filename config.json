@@ -1,10 +1,10 @@
 {
     "rl":{
         "port": 5000,
-        "host": "http://localhost"
+        "host": "http://rl"
     },
     "visualize":{
-        "host": "http://localhost",
+        "host": "http://freecell-gui",
         "port": 5005
     }
 }

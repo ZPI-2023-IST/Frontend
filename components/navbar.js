@@ -13,6 +13,7 @@ function BasicExample() {
           <Nav className="me-auto">
             <Nav.Link href="/configuration">Configuration</Nav.Link>
             <Nav.Link href="/logs">Logs</Nav.Link>
+            <Nav.Link href="/stats">Statistics</Nav.Link>
             <Nav.Link href="/visualize">Visualization</Nav.Link>
           </Nav>
         </Navbar.Collapse>

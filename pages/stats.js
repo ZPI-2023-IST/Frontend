@@ -12,7 +12,7 @@ export default function Stats() {
     const PORT = Port();
     const STATS_ENDPOINT = "/stats";
 
-    const [rewards, setRewards] = useState([4, 6, 7, 10, 12, 14, 10, 15, 16, 17, 14]);
+    const [rewards, setRewards] = useState([]);
     const [wins, setWins] = useState([]);
     const [losses, setLosses] = useState([]);
     const [timeouts, setTimeouts] = useState([]);
@@ -22,7 +22,7 @@ export default function Stats() {
         fetch(API_URL + ":" + PORT + STATS_ENDPOINT)
             .then(response => response.json())
             .then(data => {
-                // setRewards(data["CurrentGameRewards"]);
+                setRewards(data["CurrentGameRewards"]);
                 setWins(data["NoWonGames"]);
                 setLosses(data["NoLostGames"]);
                 setTimeouts(data["NoTimeouts"]);

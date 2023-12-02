@@ -25,6 +25,7 @@ export default function Stats() {
         fetch(API_URL + ":" + PORT + STATS_ENDPOINT)
             .then(response => response.json())
             .then(data => {
+                data = data.reverse();
                 if (data.length === 0) {
                     return;
                 }
@@ -156,7 +157,7 @@ export default function Stats() {
                 <Col md={{ span: 8, offset: 2 }} className="text-center mt-5">
                     <LineChart chartData={processRewards(rewards)} />
                     <Form.Label>Smoothing</Form.Label>
-                    <Form.Range min={1} max={100} value={smoothing} onChange={(e) => setSmoothing(e.target.value)} />
+                    <Form.Range min={1} max={rewards.length > 100 ? 100 : rewards.length} value={smoothing} onChange={(e) => setSmoothing(e.target.value)} />
                 </Col>
             </Row>
             <Row>

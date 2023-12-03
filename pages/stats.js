@@ -17,15 +17,25 @@ export default function Stats() {
     const [losses, setLosses] = useState([]);
     const [timeouts, setTimeouts] = useState([]);
     const [smoothing, setSmoothing] = useState(1);
+    const [game, setGame] = useState(0);
+    const [numGames, setNumGames] = useState(0);
+    const [allData, setAllData] = useState([]);
 
     useEffect(() => {
         fetch(API_URL + ":" + PORT + STATS_ENDPOINT)
             .then(response => response.json())
             .then(data => {
-                setRewards(data["CurrentGameRewards"]);
-                setWins(data["NoWonGames"]);
-                setLosses(data["NoLostGames"]);
-                setTimeouts(data["NoTimeouts"]);
+                data = data.reverse();
+                if (data.length === 0) {
+                    return;
+                }
+                setRewards(data[game]["AllGameRewardsSummed"]);
+                setWins(data[game]["NoWonGames"]);
+                setLosses(data[game]["NoLostGames"]);
+                setTimeouts(data[game]["NoTimeouts"]);
+
+                setNumGames(data.length);
+                setAllData(data);
             });
     }, []);
 
@@ -124,14 +134,30 @@ export default function Stats() {
         );
     }
 
+    function handleGameChange(event) {
+        setGame(event.target.value);
+        setRewards(allData[event.target.value]["AllGameRewardsSummed"]);
+        setWins(allData[event.target.value]["NoWonGames"]);
+        setLosses(allData[event.target.value]["NoLostGames"]);
+        setTimeouts(allData[event.target.value]["NoTimeouts"]);
+    }
+
     return (
         <Layout>
          <Container>
             <Row>
                 <Col md={{ span: 8, offset: 2 }} className="text-center mt-5">
+                    <Form.Label>Game</Form.Label>
+                    <Form.Select value={game} onChange={handleGameChange}>
+                        {Array.from(Array(numGames).keys()).map((item, index) => <option key={index} value={index}> {allData[index]["Name"]} </option>)}
+                    </Form.Select>
+                </Col>
+            </Row>
+            <Row>
+                <Col md={{ span: 8, offset: 2 }} className="text-center mt-5">
                     <LineChart chartData={processRewards(rewards)} />
                     <Form.Label>Smoothing</Form.Label>
-                    <Form.Range min={1} max={10} value={smoothing} onChange={(e) => setSmoothing(e.target.value)} />
+                    <Form.Range min={1} max={rewards.length > 100 ? 100 : rewards.length} value={smoothing} onChange={(e) => setSmoothing(e.target.value)} />
                 </Col>
             </Row>
             <Row>

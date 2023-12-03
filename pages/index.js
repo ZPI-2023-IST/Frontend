@@ -20,6 +20,7 @@ export default function Home() {
   const [showError, setShowError] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
   const [time, setTime] = useState(0);
+  const [steps, setSteps] = useState(0);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -36,6 +37,7 @@ export default function Home() {
         setRun(data["run"]);
         if(data["run"]){
           setTime(data["time"]);
+          setSteps(data["steps"]);
         }
       });
 
@@ -109,7 +111,7 @@ export default function Home() {
   function createRunText() {
     if (run) {
       let timeFormatted = new Date(time * 1000).toISOString().substr(11, 8);
-      return "Stop (" + timeFormatted + ")";
+      return "Stop (" + timeFormatted + ", " + steps + " steps)";
     } else {
       return "Start " + mode.charAt(0).toUpperCase() + mode.slice(1) + "ing";
     }

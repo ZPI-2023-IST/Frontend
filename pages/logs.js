@@ -104,7 +104,7 @@ export default function Logs() {
           >
             <ToastContainer />
             {/* <Card.Header>{'type: '+log.message.type + ', level: ' +log.message.level}</Card.Header> */}
-            <Card.Body>{'type: '+log.message.type + ', level: ' +log.message.level + ', message: ' + log.message.content}</Card.Body>
+            <Card.Body>{'['+log.message.timestamp+'] ['+log.message.type + '] [' +log.message.level + '] ' + log.message.content}</Card.Body>
           </Card>
         ))}
       </div>

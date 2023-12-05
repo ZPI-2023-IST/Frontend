@@ -37,9 +37,9 @@ export default function Visualize() {
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                const endpoint = data['url'];
                 // redirect to localhost:5005
-                window.open(VISUALIZE_URL + ":" + VISUALIZE_PORT + BOARD_ENPOINT, "_blank");
+                window.open(VISUALIZE_URL + ":" + VISUALIZE_PORT + endpoint, "_blank");
             });
     }
 

@@ -59,9 +59,12 @@ export default function Stats() {
 
 
     function processRewards(rewards) {
+        const MAX_DATAPOINTS = 10000;
+        const sample_rate = Math.ceil(rewards.length / MAX_DATAPOINTS);
+        rewards = rewards.filter((item, index) => index % sample_rate === 0);
         var newData = movingAverage(rewards, smoothing);
         return {
-            labels: newData.map((item, index) => index),
+            labels: newData.map((item, index) => index * sample_rate),
             datasets: [
                 {
                     label: "Rewards",

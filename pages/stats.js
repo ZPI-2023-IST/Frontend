@@ -21,10 +21,32 @@ export default function Stats() {
     const [numGames, setNumGames] = useState(0);
     const [allData, setAllData] = useState([]);
 
+    function compareNames(a, b) {
+        let aDate = a["Name"].split("/")[1];
+        let aTime = a["Name"].split("/")[2];
+        let bDate = b["Name"].split("/")[1];
+        let bTime = b["Name"].split("/")[2];
+
+        if (aDate < bDate) {
+            return -1;
+        }
+        if (aDate > bDate) {
+            return 1;
+        }
+        if (aTime < bTime) {
+            return -1;
+        }
+        if (aTime > bTime) {
+            return 1;
+        }
+        return 0;
+    }
+
     useEffect(() => {
         fetch(API_URL + ":" + PORT + STATS_ENDPOINT)
             .then(response => response.json())
             .then(data => {
+                data.sort((a, b) => compareNames(a, b));
                 data = data.reverse();
                 if (data.length === 0) {
                     return;

@@ -50,6 +50,7 @@ export default function Visualize() {
                 <thead>
                     <tr>
                         <th>Game</th>
+                        <th>Time</th>
                         <th>State</th>
                         <th>Action</th>
                     </tr>
@@ -58,6 +59,7 @@ export default function Visualize() {
                     {history.map((item, index) => (
                         <tr key={index}>
                             <td>{index}</td>
+                            <td>{item['timestamp']}</td>
                             <td>{item['state']}</td>
                             <td>
                                 <Button variant="primary" onClick={() => handleVisualize(index)}>

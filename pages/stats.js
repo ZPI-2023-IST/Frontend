@@ -22,24 +22,20 @@ export default function Stats() {
     const [allData, setAllData] = useState([]);
 
     function compareNames(a, b) {
-        let aDate = a["Name"].split("/")[1];
-        let aTime = a["Name"].split("/")[2];
-        let bDate = b["Name"].split("/")[1];
-        let bTime = b["Name"].split("/")[2];
+        a = a["Name"].split("_")[2];
+        b = b["Name"].split("_")[2];
+        
+        // change format of dates
+        a = a.replaceAll("-", "T").replaceAll("/", "-");
+        b = b.replaceAll("-", "T").replaceAll("/", "-");
 
-        if (aDate < bDate) {
-            return -1;
-        }
-        if (aDate > bDate) {
-            return 1;
-        }
-        if (aTime < bTime) {
-            return -1;
-        }
-        if (aTime > bTime) {
-            return 1;
-        }
-        return 0;
+        a = Date.parse(a);
+        b = Date.parse(b);
+
+        console.log(a);
+        console.log(b);
+
+        return a - b;
     }
 
     useEffect(() => {
@@ -134,6 +130,22 @@ export default function Stats() {
                     legend: {
                       display: false
                     }
+                  },
+                  scales: {
+                    x: {
+                      display: true,
+                      title: {
+                        display: true,
+                        text: 'Episode'
+                        }
+                    },
+                    y: {
+                      display: true,
+                      title: {
+                        display: true,
+                        text: 'Cumulative Reward'
+                        }
+                    }
                   }
                 }}
               />
@@ -181,12 +193,12 @@ export default function Stats() {
             <Row>
                 <Col md={{ span: 8, offset: 2 }} className="text-center mt-5">
                     <LineChart chartData={processRewards(rewards)} />
-                    <Form.Label>Smoothing</Form.Label>
+                    <Form.Label className="mt-3">Smoothing</Form.Label>
                     <Form.Range min={1} max={rewards.length > 100 ? 100 : rewards.length} value={smoothing} onChange={(e) => setSmoothing(e.target.value)} />
                 </Col>
             </Row>
             <Row>
-                <Col md={{ span: 8, offset: 2 }} className="text-center mt-5 mb-5">
+                <Col md={{ span: 8, offset: 2 }} className="text-center mt-5 mb-5 pb-5">
                     <BarChart chartData={proccessGameResults(wins, losses, timeouts)} />
                 </Col>
             </Row>

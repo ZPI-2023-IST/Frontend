@@ -13,8 +13,6 @@ export default function Visualize() {
     const VISUALIZE_URL = "http://localhost";
     const VISUALIZE_PORT = "5005";
     const VISUALIZE_ENDPOINT = "/api/visualize";
-    const BOARD_ENPOINT = "/freecell";
-
 
     const [history, setHistory] = useState([]);
 
@@ -45,6 +43,7 @@ export default function Visualize() {
 
     return (
         <Layout>
+            { (history.length > 0) &&
             <div className="table-container m-4">
             <Table striped bordered hover responsive>
                 <thead>
@@ -71,6 +70,13 @@ export default function Visualize() {
                 </tbody>
             </Table>
             </div>
+            }
+            {  (history.length === 0) &&
+            <div className="text-center mt-5">
+                <h1 className="mb-4">No game history found</h1>
+                <p>Play a game in test mode and come back later</p>
+            </div>
+            }
         </Layout>
     )
 }

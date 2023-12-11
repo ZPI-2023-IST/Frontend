@@ -22,6 +22,11 @@ export default function Stats() {
     const [allData, setAllData] = useState([]);
 
     function compareNames(a, b) {
+        if(a["Name"] == "Current")
+            return 1;
+        if(b["Name"] == "Current")
+            return -1;
+
         a = a["Name"].split("_")[2];
         b = b["Name"].split("_")[2];
         
@@ -42,7 +47,9 @@ export default function Stats() {
         fetch(API_URL + ":" + PORT + STATS_ENDPOINT)
             .then(response => response.json())
             .then(data => {
+               
                 data.sort((a, b) => compareNames(a, b));
+                
                 data = data.reverse();
                 if (data.length === 0) {
                     return;

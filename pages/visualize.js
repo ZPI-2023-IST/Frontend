@@ -15,6 +15,7 @@ export default function Visualize() {
     const VISUALIZE_ENDPOINT = "/api/visualize";
 
     const [history, setHistory] = useState([]);
+    const [filter, setFilter] = useState(['WON', 'LOST', 'TIMEOUT']);
 
     useEffect(() => {
         fetch(API_URL + ":" + PORT + HISTORY_ENDPOINT)
@@ -41,10 +42,23 @@ export default function Visualize() {
             });
     }
 
+    function handleFilterChange(newFilter) {
+        if (filter.includes(newFilter)) {
+            setFilter(filter.filter(item => item !== newFilter));
+        }
+        else {
+            setFilter([...filter, newFilter]);
+        }
+    }
     return (
         <Layout>
             { (history.length > 0) &&
             <div className="table-container m-4">
+                <div style={{display: 'flex', marginInline: 'auto', marginBottom: '1em'}}>
+                    <Button variant={filter.includes('WON') ? "primary" : "outline-primary"} onClick={() => handleFilterChange('WON')} className="m-1">WON</Button>
+                    <Button variant={filter.includes('LOST') ? "primary" : "outline-primary"} onClick={() => handleFilterChange('LOST')} className="m-1">LOST</Button>
+                    <Button variant={filter.includes('TIMEOUT') ? "primary" : "outline-primary"} onClick={() => handleFilterChange('TIMEOUT')} className="m-1">TIMEOUT</Button>
+                </div>                
             <Table striped bordered hover responsive>
                 <thead>
                     <tr>
@@ -55,7 +69,8 @@ export default function Visualize() {
                     </tr>
                 </thead>
                 <tbody>
-                    {history.map((item, index) => (
+                    {history.map((item, index) => {
+                        return (filter.includes(item['state']) && 
                         <tr key={index}>
                             <td>{index}</td>
                             <td>{item['timestamp']}</td>
@@ -66,7 +81,8 @@ export default function Visualize() {
                                 </Button>
                             </td>
                         </tr>
-                    ))}
+                        );
+                    })}
                 </tbody>
             </Table>
             </div>

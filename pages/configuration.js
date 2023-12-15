@@ -396,7 +396,7 @@ export default function Configuration() {
           <Modal.Header closeButton>
             <Modal.Title>Update config</Modal.Title>
           </Modal.Header>
-          <Modal.Body>Updating configuration will reset all weights of current model. Are you sure?</Modal.Body>
+          <Modal.Body>{modify ? "Are you sure you want to update the config?" : "Are you sure you want to create a new config? It will reset the weights."}</Modal.Body>
           <Modal.Footer>
             <Button variant="danger" onClick={handleClose}>
               Nahh
